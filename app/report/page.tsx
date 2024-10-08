@@ -145,7 +145,7 @@ export default function ReportPage() {
             amount: parsedResult.quantity
           });
         } else {
-          console.error('Invalid verification result:', parsedResult);
+          // console.error('Invalid verification result:', parsedResult);
           setVerificationStatus('failure');
         }
       } catch (error) {

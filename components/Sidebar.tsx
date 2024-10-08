@@ -20,7 +20,7 @@ interface SidebarProps{
 export default function Sidebar( { open } : SidebarProps ) {
 
     const pathname = usePathname();
-    console.log("Current path is:", pathname);
+    // console.log("Current path is:", pathname);
 
     return (
 

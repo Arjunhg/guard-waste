@@ -60,12 +60,12 @@ export default function Header( { onMenuClick } : HeaderProps ) {
     const isMobile = useMediaQuery("(max-width: 768px)");
     const [balance, setBalance] = useState(0);
 
-    console.log("Before balance is:", balance);
+    // console.log("Before balance is:", balance);
 
     const notify = ( msg:string ) => toast(msg);
     const notifyError = ( msg:string ) => toast.error(msg); 
 
-    console.log('user info', userInfo);
+    // console.log('user info', userInfo);
 
     // this useEffect initialize web3 auth and also creates a new user for us
     useEffect(() => {
@@ -161,7 +161,7 @@ export default function Header( { onMenuClick } : HeaderProps ) {
 
                     const userBalance = await getUserBalance(user.id);
                     setBalance(userBalance);
-                    console.log("user balance is:", userBalance);
+                    // console.log("user balance is:", userBalance);
                 }
             }
         };
@@ -307,7 +307,7 @@ export default function Header( { onMenuClick } : HeaderProps ) {
         return <div>Loading Web3Auth...</div>;
     }
 
-    console.log("After balance is:", balance);
+    // console.log("After balance is:", balance);
     return(
 
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">

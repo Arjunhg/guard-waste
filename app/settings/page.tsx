@@ -31,7 +31,7 @@ export default function SettingsPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // pdated settings to your backend
-    console.log('Updated settings:', settings)
+    // console.log('Updated settings:', settings)
     alert('Settings updated successfully!')
   }
 

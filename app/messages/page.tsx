@@ -42,10 +42,10 @@ export default function MessagesPage() {
       const genAI = new GoogleGenerativeAI(API_KEY)
       const model = genAI.getGenerativeModel({ model: "gemini-pro" })
 
-      console.log('Sending message:', newMessage.content)
+      // console.log('Sending message:', newMessage.content)
       const result = await model.generateContent(newMessage.content)
       const responseText = result.response.text()
-      console.log('Received response:', responseText)
+      // console.log('Received response:', responseText)
 
       const assistantMessage: Message = { role: 'assistant', content: responseText }
       setMessages(prev => [...prev, assistantMessage])
