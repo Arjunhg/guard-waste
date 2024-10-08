@@ -1,10 +1,9 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from 'react';
-import { ArrowRight, Leaf, Recycle, Users, Coins, MapPin, ChevronRight } from 'lucide-react';
+import { ArrowRight, Leaf, Recycle, Coins, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { getRecentReports, getAllRewards, getWasteCollectionTasks, getUserByEmail } from '@/utils/db/actions';
+import { getRecentReports, getAllRewards, getWasteCollectionTasks } from '@/utils/db/actions';
 import { Poppins } from 'next/font/google';
 const poppins = Poppins({ 
   weight: ['300', '400', '600'],
@@ -57,7 +56,7 @@ export default function Home() {
         }, 0);
   
         const reportsSubmitted = reports.length;
-        const tokenEarned = rewards.reduce((total, reward) => total + (reward.points || 0), 0);
+        const tokensEarned = rewards.reduce((total, reward) => total + (reward.points || 0), 0);
         const co2Offset = wasteCollected * 0.5; //0.5kg offset of co2 per kg of waste
         
         setImpactData({

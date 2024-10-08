@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>){
 
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [totalEarnings, setTotalEarnings] = useState(0)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [, setTotalEarnings] = useState(0);
 
   useEffect(() => {
 
@@ -38,14 +38,14 @@ export default function RootLayout({
 
           if(user){
             
-            const availableRewards = await getAvailableRewards(user.id) as any;
-            setTotalEarnings(availableRewards);
+            const availableRewards = await getAvailableRewards(user.id);
+            setTotalEarnings(typeof availableRewards === 'number' ? availableRewards : 0);
 
           }
         }
       } catch (error) {
 
-        console.error("Error fetching total earning")
+        console.error("Error fetching total earning:", error)
         
       }
     };
@@ -63,7 +63,7 @@ export default function RootLayout({
         <div className="min-h-screen bg-gray-50 flex flex-col">
 
           {/* header */}
-          <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} totalEarnings={totalEarnings}/>
+          <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} /*totalEarnings={totalEarnings}*//>
 
           <div className="flex flex-1 "> {/*Flex container for main content area. Sidebar on left and main content on the right */}
 

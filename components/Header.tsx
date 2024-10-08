@@ -1,10 +1,9 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from 'next/navigation';
+// import { usePathname } from 'next/navigation';
 import { Button } from "./ui/button";
-import { Menu, Coins, Leaf, Search, Bell, User, ChevronDown, LogIn, LogOut } from "lucide-react";
+import { Menu, Coins, Leaf, Search, Bell, User, ChevronDown, LogIn } from "lucide-react";
 import { 
     DropdownMenu, 
     DropdownMenuContent, 
@@ -36,7 +35,9 @@ const privateKeyProvider = new EthereumPrivateKeyProvider({
     config: { chainConfig },
 });
 
+
 const web3auth = new Web3Auth({
+    // @ts-expect-error - may initially be null
     clientId,
     web3AuthNetwork: WEB3AUTH_NETWORK.TESTNET,
     privateKeyProvider,
@@ -44,16 +45,17 @@ const web3auth = new Web3Auth({
 
 interface HeaderProps {
     onMenuClick: () => void;
-    totalEarnings: number;
+    // totalEarnings: number;
 }
 
-export default function Header( { onMenuClick, totalEarnings } : HeaderProps ) {
+export default function Header( { onMenuClick } : HeaderProps ) {
 
-    const [provider, setProvider] = useState<IProvider | null>(null); //provider is the name of the network we are using
+    const [, setProvider] = useState<IProvider | null>(null); //provider is the name of the network we are using
     const [loggedIn, setLoggedIn] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [userInfo, setUserInfo] = useState<any>(null);
-    const pathname = usePathname();
+    // @ts-expect-error - Web3Auth types are not fully compatible with our usage
+    const [userInfo, setUserInfo] = useState<{email?: string; name?: string} >(null);
+    // const pathname = usePathname();
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const isMobile = useMediaQuery("(max-width: 768px)");
     const [balance, setBalance] = useState(0);
@@ -129,6 +131,7 @@ export default function Header( { onMenuClick, totalEarnings } : HeaderProps ) {
                     if(user){
         
                         const unreadNotifications = await getUnreadNotifications(user.id);
+                        // @ts-expect-error - Notification type is not explicitly defined
                         setNotifications(unreadNotifications);
         
                     }
@@ -251,6 +254,7 @@ export default function Header( { onMenuClick, totalEarnings } : HeaderProps ) {
             await web3auth.logout();
             setProvider(null);
             setLoggedIn(false);
+            // @ts-expect-error - User state may be null initially
             setUserInfo(null);
 
             localStorage.removeItem('userEmail');
@@ -294,6 +298,7 @@ export default function Header( { onMenuClick, totalEarnings } : HeaderProps ) {
 
         await markNotificationAsRead(notificationId);
         setNotifications( prevNotifications => 
+            // @ts-expect-error - Notification type is not explicitly defined
             prevNotifications.filter(notification => notification.id !== notificationId)
         );
     };
@@ -382,14 +387,18 @@ export default function Header( { onMenuClick, totalEarnings } : HeaderProps ) {
                             {
                                 notifications.length > 0 ? (
 
-                                    notifications.map((notification:any) => (
+                                    notifications.map((notification:Notification) => (
 
                                         <DropdownMenuItem 
+                                        // @ts-expect-error - Notification type is not explicitly defined
                                             key={notification.id}
+                                            // @ts-expect-error - Notification type is not explicitly defined
                                             onClick={() => handleNotificationClick(notification.id)}
                                         >
                                             <div className="flex flex-col">
+                                             {/* @ts-expect-error - Notification type is not explicitly defined */}
                                                 <span className="font-medium">{notification.type}</span>
+                                                {/* @ts-expect-error - Notification type is not explicitly defined */}
                                                 <span className="text-sm text-gray-500">{notification.message}</span>
                                             </div>
                                         </DropdownMenuItem>
