@@ -1,10 +1,12 @@
 'use client'
 import { useState, useEffect } from 'react';
-import { ArrowRight, Leaf, Recycle, Coins, MapPin } from 'lucide-react';
+import { ArrowRight, Leaf, Recycle, Coins, MapPin, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { getRecentReports, getAllRewards, getWasteCollectionTasks } from '@/utils/db/actions';
 import { Poppins } from 'next/font/google';
+import { useAuth } from './context/AuthContext';
+
 const poppins = Poppins({ 
   weight: ['300', '400', '600'],
   subsets: ['latin'],
@@ -38,6 +40,8 @@ export default function Home() {
     tokensEarned: 0,
     co2Offset: 0
   })
+
+  const { loggedIn, login, userInfo } = useAuth();
 
   useEffect(() => {
 
@@ -100,25 +104,19 @@ export default function Home() {
           We are a digital platform dedicated to promoting sustainable waste management practices.
         </p>
 
-        {/* {!loggedIn ? (
-          <Button onClick={handleLogin} className="bg-green-600 hover:bg-green-700 text-white text-lg py-6 px-10 rounded-full font-medium transition-all duration-300 ease-in-out transform hover:scale-105">
-            Get Started
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        ) : (
+        {loggedIn ? (
           <Link href="/report">
             <Button className="bg-green-600 hover:bg-green-700 text-white text-lg py-6 px-10 rounded-full font-medium transition-all duration-300 ease-in-out transform hover:scale-105 mt-10">
               Report Waste
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
-        )} */}
-         <Link href="/report">
-            <Button className="bg-green-600 hover:bg-green-700 text-white text-lg py-6 px-10 rounded-full font-medium transition-all duration-300 ease-in-out transform hover:scale-105 mt-10">
-              Report Waste
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+        ) : (
+          <Button onClick={login} className="bg-green-600 hover:bg-green-700 text-white text-lg py-6 px-10 rounded-full font-medium transition-all duration-300 ease-in-out transform hover:scale-105 mt-10">
+            Get Started
+            <LogIn className="ml-2 h-5 w-5" />
+          </Button>
+        )}
 
       </section>
 
@@ -160,6 +158,19 @@ export default function Home() {
         </div>
 
       </section>
+
+      {loggedIn && (
+        <section className="text-center mb-20">
+          <h2 className="text-3xl font-bold mb-4 text-gray-800">Welcome back, {userInfo?.name || 'User'}!</h2>
+          <p className="text-xl text-gray-600">Ready to make a difference today?</p>
+          <Link href="/report">
+            <Button className="bg-green-600 hover:bg-green-700 text-white text-lg py-4 px-8 rounded-full font-medium transition-all duration-300 ease-in-out transform hover:scale-105 mt-6">
+              Let&apos;s Report Waste Together
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+        </section>
+      )}
 
     </div>
 

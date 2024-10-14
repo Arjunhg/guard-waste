@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { getAvailableRewards, getUserByEmail } from "@/utils/db/actions";
 import { Analytics } from "@vercel/analytics/react"
+import { AuthProvider } from "./context/AuthContext";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -59,27 +60,30 @@ export default function RootLayout({
 
       <body className={inter.className}>
 
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <AuthProvider>
+          <div className="min-h-screen bg-gray-50 flex flex-col">
 
-          {/* header */}
-          <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} /*totalEarnings={totalEarnings}*//>
+            {/* header */}
+            <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} /*totalEarnings={totalEarnings}*//>
 
-          <div className="flex flex-1 "> {/*Flex container for main content area. Sidebar on left and main content on the right */}
+            <div className="flex flex-1 "> {/*Flex container for main content area. Sidebar on left and main content on the right */}
 
-            {/* sidebar */}
-            <Sidebar open={sidebarOpen} />
+              {/* sidebar */}
+              <Sidebar open={sidebarOpen} />
 
-            {/* main content */}
-            <main className="flex-1 p-4 lg:p-8 ml-0 lg:ml-64 transition-all duration-300">
-              <Analytics/>
-              {children}
-            </main>
+              {/* main content */}
+              <main className="flex-1 p-4 lg:p-8 ml-0 lg:ml-64 transition-all duration-300">
+                <Analytics/>
+                {children}
+              </main>
+
+            </div>
 
           </div>
 
-        </div>
+          <Toaster />
+        </AuthProvider>
 
-        <Toaster />
         
       </body>
 
