@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react";
 import { Inter } from 'next/font/google';
 import "./globals.css";
-// import Header from "@/components/Header";
-// import Sidebar from "@/components/Sidebar";
 import { Toaster } from 'react-hot-toast';
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { getAvailableRewards, getUserByEmail } from "@/utils/db/actions";
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -72,6 +71,7 @@ export default function RootLayout({
 
             {/* main content */}
             <main className="flex-1 p-4 lg:p-8 ml-0 lg:ml-64 transition-all duration-300">
+              <Analytics/>
               {children}
             </main>
 
