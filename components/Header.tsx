@@ -22,7 +22,7 @@ interface HeaderProps {
 
 export default function Header( { onMenuClick } : HeaderProps ) {
 
-    
+    // for responsive
     const isMobile = useMediaQuery("(max-width: 768px)");
 
     const { loggedIn, login, userInfo, getUserInfo, logout, balance, notifications, handleNotificationClick} = useAuth();

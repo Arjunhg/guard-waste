@@ -12,6 +12,7 @@ export function useMediaQuery(query: string): boolean {
     }
 
     const listener = () => setMatches(media.matches);
+    // deprecated
     media.addListener(listener);
     return () => media.removeListener(listener);
     

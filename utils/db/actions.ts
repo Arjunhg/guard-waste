@@ -457,3 +457,5 @@ export async function getAllRewards() {
     return [];
   }
 }
+
+// scale for more

@@ -43,7 +43,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [, setProvider] = useState<IProvider | null>(null); //provider is the name of the network we are using
+  const [, setProvider] = useState<IProvider | null>(null); //provider is the name of the network we  are using
   const [loggedIn, setLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState<{ email?: string; name?: string } | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
