@@ -146,6 +146,7 @@ export default function CollectPage() {
       const result = await model.generateContent([prompt, ...imageParts])
       const response = await result.response
       const text = response.text()
+      // console.log("Text is:", text);
       
       try {
         const cleanedText = text.replace(/```json|```/g, '').trim(); // Removes backticks and trims whitespace
@@ -156,6 +157,8 @@ export default function CollectPage() {
           confidence: parsedResult.confidence
         })
         setVerificationStatus('success')
+
+        // console.log("Parsed amount is:", parsedResult.quantityMatch);
         
         if (parsedResult.wasteTypeMatch && parsedResult.quantityMatch && parsedResult.confidence > 0.7) {
           await handleStatusChange(selectedTask.id, 'verified')
