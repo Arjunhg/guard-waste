@@ -1,4 +1,4 @@
-// will help in db and schema management
+// will help in db and schema 
 
 export default {
 
