@@ -103,7 +103,7 @@ export default function RewardsPage() {
 
     if (balance > 0) {
       try {
-        // Update database
+        // Update databas
         await redeemReward(user.id, 0);
         
         // Create a new transaction record

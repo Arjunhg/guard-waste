@@ -25,6 +25,7 @@ export default function LeaderboardPage() {
         const fetchedRewards = await getAllRewards()
         setRewards(fetchedRewards)
 
+        // local storage
         const userEmail = localStorage.getItem('userEmail')
         if (userEmail) {
           const fetchedUser = await getUserByEmail(userEmail)

@@ -65,7 +65,7 @@ export default function RootLayout({
             {/* header */}
             <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} /*totalEarnings={totalEarnings}*//>
 
-            <div className="flex flex-1 "> {/*Flex container for main content area. Sidebar on left and main content on the right */}
+            <div className="flex flex-1 ">
 
               {/* sidebar */}
               <Sidebar open={sidebarOpen} />

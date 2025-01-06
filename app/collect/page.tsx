@@ -158,7 +158,7 @@ export default function CollectPage() {
         })
         setVerificationStatus('success')
 
-        // console.log("Parsed amount is:", parsedResult.quantityMatch);
+        // console.log("Parsed amount is", parsedResult.quantityMatch);
         
         if (parsedResult.wasteTypeMatch && parsedResult.quantityMatch && parsedResult.confidence > 0.7) {
           await handleStatusChange(selectedTask.id, 'verified')

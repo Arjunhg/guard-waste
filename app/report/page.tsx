@@ -134,7 +134,7 @@ export default function ReportPage() {
       const response = await result.response;
       const text = response.text();
     
-      // console.log("Verification result:", text);
+      // console.log("Veriication result:", text);
       
       try {
         const cleanedText = text.trim()

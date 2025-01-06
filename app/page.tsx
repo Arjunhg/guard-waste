@@ -140,7 +140,6 @@ export default function Home() {
         />
 
       </section>
-      {/*  */}
 
       {/* Impact card */}
       <section className="bg-white p-10 rounded-3xl shadow-lg mb-20">

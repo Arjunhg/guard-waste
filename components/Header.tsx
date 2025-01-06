@@ -35,7 +35,7 @@ export default function Header( { onMenuClick } : HeaderProps ) {
 
                 <div className="flex items-center">
 
-                    {/* Button for menu */}
+                    {/* Button for menu component*/}
 
                     <Button variant='ghost' size='icon' className="mr-2 md:mr-4" onClick={onMenuClick}>
                         <Menu className="h-6 w-6" />

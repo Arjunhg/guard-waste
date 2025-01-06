@@ -1,7 +1,7 @@
 // Interact with the database
 import { db } from "./dbConfig";
 import { CollectionWastes, Notifications, Reports, Rewards, Transactions, Users } from './schema';
-import { eq, sql, and, desc, ne } from 'drizzle-orm';
+import { eq, sql, and, desc } from 'drizzle-orm';
 
 export async function createUser( email:string, name:string ){
 

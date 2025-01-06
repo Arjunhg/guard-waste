@@ -104,7 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [userInfo]);
 
-  // useEffect for fetching the notification
+  // useEffect for fetching the notificatio
   useEffect(() => {
 
     const fetchNotifications = async () => {
