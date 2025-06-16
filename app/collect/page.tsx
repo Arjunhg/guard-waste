@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'react-hot-toast';
 import { getWasteCollectionTasks, updateTaskStatus, saveReward, saveCollectedWaste, getUserByEmail } from '@/utils/db/actions';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { compareQuantities, normalizeQuantity} from '@/utils/wasteVerification';
 
 
 const geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
