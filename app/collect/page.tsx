@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'react-hot-toast';
 import { getWasteCollectionTasks, updateTaskStatus, saveReward, saveCollectedWaste, getUserByEmail } from '@/utils/db/actions';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { compareQuantities, normalizeQuantity} from '@/utils/wasteVerification';
 
 
 const geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
@@ -110,27 +111,27 @@ export default function CollectPage() {
 
   const handleVerify = async () => {
     if (!selectedTask || !verificationImage || !user) {
-      toast.error('Missing required information for verification.')
-      return
+      toast.error('Missing required information for verification.');
+      return;
     }
-
-    setVerificationStatus('verifying')
-    
+  
+    setVerificationStatus('verifying');
+  
     try {
-      const genAI = new GoogleGenerativeAI(geminiApiKey!)
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
-
-      const base64Data = readFileAsBase64(verificationImage)
-
+      const genAI = new GoogleGenerativeAI(geminiApiKey!);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  
+      const base64Data = readFileAsBase64(verificationImage);
+  
       const imageParts = [
         {
           inlineData: {
             data: base64Data,
-            mimeType: 'image/jpeg', 
+            mimeType: 'image/jpeg',
           },
         },
-      ]
-
+      ];
+  
       const prompt = `You are an expert in waste management and recycling. Analyze this image and provide:
         1. Confirm if the waste type matches: ${selectedTask.wasteType}
         2. Estimate if the quantity matches: ${selectedTask.amount}
@@ -141,57 +142,68 @@ export default function CollectPage() {
           "wasteTypeMatch": true/false,
           "quantityMatch": true/false,
           "confidence": confidence level as a number between 0 and 1
-        }`
-
-      const result = await model.generateContent([prompt, ...imageParts])
-      const response = await result.response
-      const text = response.text()
-      // console.log("Text is:", text);
-      
+        }`;
+  
+      const result = await model.generateContent([prompt, ...imageParts]);
+      const response = await result.response;
+      const text = response.text();
+  
       try {
-        const cleanedText = text.replace(/```json|```/g, '').trim(); // Removes backticks and trims whitespace
+        const cleanedText = text.replace(/```json|```/g, '').trim();
         const parsedResult = JSON.parse(cleanedText);
+  
+        console.log('Cleaned Text:', cleanedText);
+        console.log('Parsed Result:', parsedResult);
+  
+        // Extract the necessary values from the AI response
+        const { wasteTypeMatch, quantityMatch, confidence } = parsedResult;
+  
+        if (wasteTypeMatch === undefined || quantityMatch === undefined || confidence === undefined) {
+          console.error('Required fields are missing from the AI response.');
+          setVerificationStatus('failure');
+          toast.error('Invalid data from AI response.');
+          return;
+        }
+  
         setVerificationResult({
-          wasteTypeMatch: parsedResult.wasteTypeMatch,
-          quantityMatch: parsedResult.quantityMatch,
-          confidence: parsedResult.confidence
-        })
-        setVerificationStatus('success')
-
-        // console.log("Parsed amount is", parsedResult.quantityMatch);
-        
-        if (parsedResult.wasteTypeMatch && parsedResult.quantityMatch && parsedResult.confidence > 0.7) {
-          await handleStatusChange(selectedTask.id, 'verified')
-          const earnedReward = Math.floor(Math.random() * 50) + 10 // Random reward between 10 and 59
-          
-          // Save the reward
-          await saveReward(user.id, earnedReward)
-
-          // Save the collected waste
-          await saveCollectedWaste(selectedTask.id, user.id, parsedResult)
-
-          setReward(earnedReward)
-          toast.success(`Verification successful! You earned ${earnedReward} tokens!`, {
-            duration: 5000,
-            position: 'top-center',
-          })
+          wasteTypeMatch,
+          quantityMatch,
+          confidence,
+        });
+        setVerificationStatus('success');
+  
+        if (wasteTypeMatch && confidence > 0.7) {
+          // Handle verification success
+          await handleStatusChange(selectedTask.id, 'verified');
+          const earnedReward = Math.floor(Math.random() * 50) + 10;
+  
+          await saveReward(user.id, earnedReward);
+          await saveCollectedWaste(selectedTask.id, user.id, {
+            wasteTypeMatch,
+            quantityMatch,
+            confidence,
+          });
+  
+          setReward(earnedReward);
+          toast.success(`Verification successful! You earned ${earnedReward} tokens!`);
         } else {
-          toast.error('Verification failed. The collected waste does not match the reported waste.', {
-            duration: 5000,
-            position: 'top-center',
-          })
+          // Handle verification failure
+          toast.error(
+            `Verification failed. ${!wasteTypeMatch ? 'Waste type does not match. ' : ''}${!quantityMatch ? 'Quantity does not match. ' : ''}`
+          );
         }
       } catch (error) {
-        console.log(error);
-        
-        console.error('Failed to parse JSON response:', text)
-        setVerificationStatus('failure')
+        console.error('Failed to parse JSON response:', text, error);
+        setVerificationStatus('failure');
       }
     } catch (error) {
-      console.error('Error verifying waste:', error)
-      setVerificationStatus('failure')
+      console.error('Error verifying waste:', error);
+      setVerificationStatus('failure');
     }
-  }
+  };
+  
+  
+  
 
   const filteredTasks = tasks.filter(task =>
     task.location.toLowerCase().includes(searchTerm.toLowerCase())
@@ -349,7 +361,7 @@ export default function CollectPage() {
             {verificationStatus === 'success' && verificationResult && (
               <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
                 <p>Waste Type Match: {verificationResult.wasteTypeMatch ? 'Yes' : 'No'}</p>
-                <p>Quantity Match: {verificationResult.quantityMatch ? 'Yes' : 'No'}</p>
+                {/* <p>Quantity Match: {verificationResult.quantityMatch ? 'Yes' : 'No'}</p> */}
                 <p>Confidence: {(verificationResult.confidence * 100).toFixed(2)}%</p>
               </div>
             )}
@@ -362,13 +374,6 @@ export default function CollectPage() {
           </div>
         </div>
       )}
-
-      {/* Add a conditional render to show user info or login prompt */}
-      {/* {user ? (
-        <p className="text-sm text-gray-600 mb-4">Logged in as: {user.name}</p>
-      ) : (
-        <p className="text-sm text-red-600 mb-4">Please log in to collect waste and earn rewards.</p>
-      )} */}
     </div>
   )
 }

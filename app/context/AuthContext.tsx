@@ -5,12 +5,12 @@ import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { createUser, getUnreadNotifications, getUserBalance, getUserByEmail, markNotificationAsRead } from "@/utils/db/actions";
 import { toast } from "react-toastify";
 
-const clientId = process.env.NEXT_WEB3_AUTH_CLIENT_ID;
+const clientId = process.env.NEXT_PUBLIC_WEB3_AUTH_CLIENT_ID;
 
 const chainConfig = {
   chainNamespace: CHAIN_NAMESPACES.EIP155,
   chainId: "0xaa36a7",
-  rpcTarget: "https://rpc.ankr.com/eth_sepolia",
+  rpcTarget: `https://rpc.ankr.com/eth_sepolia/${process.env.NEXT_PUBLIC_ANKR_API_KEY}`,
   displayName: "Ethereum Sepolia Testnet",
   blockExplorerUrl: "https://sepolia.etherscan.io",
   ticker: "ETH",
@@ -25,7 +25,7 @@ const privateKeyProvider = new EthereumPrivateKeyProvider({
 const web3auth = new Web3Auth({
   // @ts-expect-error - may initially be null
   clientId,
-  web3AuthNetwork: WEB3AUTH_NETWORK.TESTNET,
+  web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
   privateKeyProvider,
 });
 
@@ -43,18 +43,25 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [, setProvider] = useState<IProvider | null>(null); //provider is the name of the network we  are using
+  const [, setProvider] = useState<IProvider | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState<{ email?: string; name?: string } | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const init = async () => {
       try {
+        if (!clientId) {
+          console.error("Web3Auth Client ID is not defined");
+          return;
+        }
+
         await web3auth.initModal();
         setProvider(web3auth.provider);
+        setIsInitialized(true);
         
         if (web3auth.connected) {
           await web3auth.connect();
@@ -135,6 +142,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   const login = async () => {
+    if (!isInitialized) {
+      toast.error("Web3Auth is still initializing. Please wait a moment and try again.");
+      return;
+    }
+
     if (!web3auth) {
       toast.error("Web3Auth not initialized yet");
       return;
