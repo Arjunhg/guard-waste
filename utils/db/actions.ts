@@ -121,7 +121,7 @@ export async function markNotificationAsRead( notificationId: number ){
 }
 
 // src/page.tsx
-export async function getRecentReports(limit: number = 10){
+export async function getRecentReports(limit: number = 200){
 
     try {
 
@@ -137,7 +137,7 @@ export async function getRecentReports(limit: number = 10){
     }
 }
 
-export async function getWasteCollectionTasks(limit: number = 20) {
+export async function getWasteCollectionTasks(limit: number = 200) {
 
     try {
 
@@ -152,6 +152,7 @@ export async function getWasteCollectionTasks(limit: number = 20) {
           collectorId: Reports.collectorId,
         })
         .from(Reports)
+        .orderBy(desc(Reports.createdAt))
         .limit(limit)
         .execute();
   
